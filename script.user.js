@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         JIRA Board Randomize Swimlanes
-// @version      1.2
+// @version      1.3
 // @description  Add a Randomize button to JIRA board.
 // @author       https://github.com/clintonmonk
 // @match        https://*.atlassian.net/jira/software/c/projects/*/boards/*
@@ -40,7 +40,16 @@
 
             // get swimlanes
             const swimlanes = Array.from(document.querySelectorAll("div[data-test-id='platform-board-kit.ui.swimlane.swimlane-wrapper']"));
+            if (swimlanes.length === 0) {
+                console.error("No swimlanes found!");
+                return;
+            }
+
             const parentElement = swimlanes[0].parentElement;
+            if (!parentElement) {
+                console.error("Parent element of swimlanes not found!");
+                return;
+            }
             console.log("Found swimlanes:", swimlanes);
 
             // randomize using lodash
@@ -124,7 +133,15 @@
             }
 
             const insightInnerDiv = insightButton.parentElement;
+            if (!insightInnerDiv) {
+                console.error("Insight inner div not found!");
+                return;
+            }
             const insightOuterDiv = insightInnerDiv.parentElement;
+            if (!insightOuterDiv) {
+                console.error("Insight outer div not found!");
+                return;
+            }
 
             const button = document.createElement("button");
             button.onclick = () => { randomizeSwimlanesMultipleTimes(10) }
@@ -141,6 +158,10 @@
 
             // add to DOM right before the Insights button
             const parentNode = insightOuterDiv.parentElement;
+            if (!parentNode) {
+                console.error("Parent node of insight outer div not found!");
+                return;
+            }
             parentNode.insertBefore(outerDiv, insightOuterDiv);
 
             console.log("Randomize button added!");

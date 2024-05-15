@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         JIRA Board Randomize Swimlanes
-// @version      1.6
+// @version      1.7
 // @description  Add a Randomize button to JIRA board.
 // @author       https://github.com/clintonmonk
 // @match        https://*.atlassian.net/jira/software/c/projects/*/boards/*
@@ -53,21 +53,16 @@
             }
 
             // randomize using lodash
-            const randomizedSwimlanes = _.partition(swimlanes, (swimlane) => { return !isUnassignedSwimlane(swimlane) })
-                .map((swimlanes) => {
-                    console.log("Swimlanes before shuffling:", swimlanes);
-                    const shuffled = _.shuffle(swimlanes);
-                    console.log("Swimlanes after shuffling:", shuffled);
-                    return shuffled;
-                })
-                .flat();
+            const [assignedSwimlanes, unassignedSwimlanes] = _.partition(swimlanes, (swimlane) => !isUnassignedSwimlane(swimlane));
+            const shuffledSwimlanes = _.shuffle(assignedSwimlanes).concat(unassignedSwimlanes);
 
-            console.log("Randomized swimlanes:", randomizedSwimlanes);
+            console.log("Shuffled swimlanes:", shuffledSwimlanes);
 
-            // add to DOM
-            const frag = document.createDocumentFragment();
-            randomizedSwimlanes.forEach(swimlane => frag.appendChild(swimlane));
-            parentElement.appendChild(frag);
+            // clear existing swimlanes
+            parentElement.innerHTML = '';
+
+            // add shuffled swimlanes to DOM
+            shuffledSwimlanes.forEach(swimlane => parentElement.appendChild(swimlane));
 
             console.log("Swimlanes appended to parent element.");
         }

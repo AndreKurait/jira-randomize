@@ -7,6 +7,9 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=atlassian.net
 // @require      https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js
 // @grant        none
+// @updateURL    https://raw.githubusercontent.com/AndreKurait/jira-randomize/main/script.js
+// @downloadURL  https://raw.githubusercontent.com/AndreKurait/jira-randomize/main/script.js
+// @supportURL   https://github.com/AndreKurait/jira-randomize/issues
 // ==/UserScript==
 
 

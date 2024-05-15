@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         JIRA Board Randomize Swimlanes
-// @version      1.4
+// @version      1.1
 // @description  Add a Randomize button to JIRA board.
 // @author       https://github.com/clintonmonk
 // @match        https://*.atlassian.net/jira/software/c/projects/*/boards/*
@@ -105,16 +105,7 @@
          */
         const findInsightsButton = () => {
             console.log("Finding Insights button...");
-            // Search for a button with "insights" inside its innerHTML.
-            // Previous approach: document.querySelector("button[data-testid='insights-show-insights-button.ui.insights-button']")
-            let insightButton = null;
-            const buttons = document.querySelectorAll("button");
-            buttons.forEach((button) => {
-                const innerHTML = button.innerHTML.toLowerCase();
-                if (innerHTML.includes("insights")) {
-                    insightButton = button;
-                }
-            });
+            const insightButton = document.querySelector("button[data-testid='insights-show-insights-button.ui.insights-button']");
             console.log("Found Insights button:", insightButton);
             return insightButton;
         }

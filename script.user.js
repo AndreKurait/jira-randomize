@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         JIRA Board Randomize Swimlanes
-// @version      1.7
+// @version      2
 // @description  Add a Randomize button to JIRA board.
 // @author       https://github.com/clintonmonk
 // @match        https://*.atlassian.net/jira/software/c/projects/*/boards/*
@@ -15,12 +15,20 @@
 (function() {
     'use strict';
 
+    // Function to load FontAwesome CSS dynamically
+    const loadFontAwesome = () => {
+        const link = document.createElement('link');
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+    };
+
+    // Call the function to load FontAwesome
+    loadFontAwesome();
+
     window.onload = function() {
         console.log("Window loaded, starting script...");
 
-        /**
-         * Whether or not the provided swimlane is the "Unassigned" swimlane.
-         */
         const isUnassignedSwimlane = (swimlane) => {
             console.log("Checking if swimlane is unassigned...", swimlane);
             const result = Array.from(swimlane.querySelectorAll("div"))
@@ -32,13 +40,9 @@
             return result;
         }
 
-        /**
-         * Randomizes the order of the swimlanes. Keeps "Unassigned" at the end.
-         */
         const randomizeSwimlanes = () => {
             console.log("Randomizing swimlanes...");
 
-            // get swimlanes
             const swimlanes = Array.from(document.querySelectorAll("div[data-testid='platform-board-kit.ui.swimlane.swimlane-wrapper']"));
             if (swimlanes.length === 0) {
                 console.error("No swimlanes found!");
@@ -52,24 +56,23 @@
                 return;
             }
 
-            // randomize using lodash
             const [assignedSwimlanes, unassignedSwimlanes] = _.partition(swimlanes, (swimlane) => !isUnassignedSwimlane(swimlane));
             const shuffledSwimlanes = _.shuffle(assignedSwimlanes).concat(unassignedSwimlanes);
 
             console.log("Shuffled swimlanes:", shuffledSwimlanes);
 
-            // clear existing swimlanes
+            shuffledSwimlanes.forEach((swimlane) => {
+                swimlane.style.position = '';
+                swimlane.style.top = '';
+            });
+
             parentElement.innerHTML = '';
 
-            // add shuffled swimlanes to DOM
             shuffledSwimlanes.forEach(swimlane => parentElement.appendChild(swimlane));
 
-            console.log("Swimlanes appended to parent element.");
+            console.log("Swimlanes appended to parent element with updated positions.");
         }
 
-        /**
-         * Randomizes a given number of times (for fun!).
-         */
         const randomizeSwimlanesMultipleTimes = (remaining) => {
             console.log("Randomizing swimlanes multiple times. Remaining:", remaining);
             randomizeSwimlanes();
@@ -95,24 +98,9 @@
             }
         }
 
-        /**
-         * Find Insights button.
-         */
-        const findInsightsButton = () => {
-            console.log("Finding Insights button...");
-            const insightButton = document.querySelector("button[data-testid='insights-show-insights-button.ui.insights-button']");
-            console.log("Found Insights button:", insightButton);
-            return insightButton;
-        }
-
-        /**
-         * Adds a "Randomize" button.
-         */
-        const addRandomizeButton = () => {
+        const addRandomizeButton = (insightButton, isMinimized) => {
             console.log("Adding Randomize button...");
 
-            // copy the Insights button
-            const insightButton = findInsightsButton();
             if (!insightButton) {
                 console.error("Insights button not found, cannot add Randomize button.");
                 return;
@@ -132,7 +120,19 @@
             const button = document.createElement("button");
             button.onclick = () => { randomizeSwimlanesMultipleTimes(10) }
             button.className = insightButton.className;
-            button.innerHTML = "Randomize";
+
+            if (isMinimized) {
+                button.innerHTML = '<i class="fas fa-random"></i>';
+                button.style.fontSize = '18px';
+                button.style.color = 'var(--ds-icon, #42526E) !important';
+                button.style.display = 'flex';
+                button.style.alignItems = 'center';
+                button.style.justifyContent = 'center';
+                button.style.width = '32px';
+                button.style.height = '32px';
+            } else {
+                button.innerHTML = "Randomize";
+            }
 
             const innerDiv = document.createElement("div");
             innerDiv.className = insightInnerDiv.className;
@@ -142,31 +142,49 @@
             outerDiv.className = insightOuterDiv.className;
             outerDiv.appendChild(innerDiv);
 
-            // add to DOM right before the Insights button
-            const parentNode = insightOuterDiv.parentElement;
+            const insightsParent = insightOuterDiv.parentElement.parentElement;
+            const parentNode = insightsParent.parentElement;
             if (!parentNode) {
                 console.error("Parent node of insight outer div not found!");
                 return;
             }
-            parentNode.insertBefore(outerDiv, insightOuterDiv);
+            parentNode.insertBefore(outerDiv, insightsParent);
 
             console.log("Randomize button added!");
+        }
+
+        const findAndAddRandomizeButtons = () => {
+            const insightsFullButton = document.querySelector("button[data-testid='insights-show-insights-button.ui.insights-button']");
+            const insightsMinimizedButton = document.querySelector("button[data-testid='insights-show-insights-button.ui.button-test-id-hide']");
+
+            if (insightsFullButton) {
+                addRandomizeButton(insightsFullButton, false);
+            }
+            if (insightsMinimizedButton) {
+                addRandomizeButton(insightsMinimizedButton, true);
+            }
+
+            if (!insightsFullButton && !insightsMinimizedButton) {
+                console.error("No Insights button found!");
+                alert("No Insights button found!");
+            }
         }
 
         const waitForInsightsButton = (callback, timeRemaining) => {
             console.log("Waiting for Insights button... Time remaining:", timeRemaining);
             const interval = 200;
-            const insightButton = findInsightsButton();
-            if (insightButton) {
+            const insightButton = document.querySelector("button[data-testid='insights-show-insights-button.ui.insights-button']");
+            const minimizedInsightButton = document.querySelector("button[data-testid='insights-show-insights-button.ui.button-test-id-hide']");
+            if (insightButton || minimizedInsightButton) {
                 callback();
             } else if (timeRemaining <= 0) {
-                alert("Insight button not found!");
-                console.error("Insight button not found after waiting.");
+                alert("Insights button not found!");
+                console.error("Insights button not found after waiting.");
             } else {
                 setTimeout(() => { waitForInsightsButton(callback, timeRemaining - interval) }, interval);
             }
         }
 
-        waitForInsightsButton(addRandomizeButton, 2000);
+        waitForInsightsButton(findAndAddRandomizeButtons, 2000);
     };
 })();

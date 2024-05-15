@@ -3,7 +3,7 @@
 // @version      1
 // @description  Add a Randomize button to JIRA board.
 // @author       https://github.com/clintonmonk
-// @match        https://*.atlassian.net/jira/software/projects/*/boards/*
+// @match        https://*.atlassian.net/jira/software(/c)?/projects/*/boards/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=atlassian.net
 // @require      https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js
 // @grant        none

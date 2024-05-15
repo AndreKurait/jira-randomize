@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         JIRA Board Randomize Swimlanes
-// @version      1.5
+// @version      1.6
 // @description  Add a Randomize button to JIRA board.
 // @author       https://github.com/clintonmonk
 // @match        https://*.atlassian.net/jira/software/c/projects/*/boards/*
@@ -25,7 +25,7 @@
             console.log("Checking if swimlane is unassigned...", swimlane);
             const result = Array.from(swimlane.querySelectorAll("div"))
                 .reduce(
-                    (acc, childDiv) => acc || childDiv.textContent == "Unassigned",
+                    (acc, childDiv) => acc || childDiv.textContent === "Unassigned",
                     false,
                 );
             console.log("Is unassigned swimlane:", result);
@@ -39,7 +39,7 @@
             console.log("Randomizing swimlanes...");
 
             // get swimlanes
-            const swimlanes = Array.from(document.querySelectorAll("div[data-test-id='platform-board-kit.ui.swimlane.swimlane-wrapper']"));
+            const swimlanes = Array.from(document.querySelectorAll("div[data-testid='platform-board-kit.ui.swimlane.swimlane-wrapper']"));
             if (swimlanes.length === 0) {
                 console.error("No swimlanes found!");
                 return;

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         JIRA Board Randomize Swimlanes
-// @version      1.3
+// @version      1.4
 // @description  Add a Randomize button to JIRA board.
 // @author       https://github.com/clintonmonk
 // @match        https://*.atlassian.net/jira/software/c/projects/*/boards/*
@@ -44,13 +44,13 @@
                 console.error("No swimlanes found!");
                 return;
             }
+            console.log("Found swimlanes:", swimlanes);
 
             const parentElement = swimlanes[0].parentElement;
             if (!parentElement) {
                 console.error("Parent element of swimlanes not found!");
                 return;
             }
-            console.log("Found swimlanes:", swimlanes);
 
             // randomize using lodash
             const randomizedSwimlanes = _.partition(swimlanes, (swimlane) => { return !isUnassignedSwimlane(swimlane) })

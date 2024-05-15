@@ -122,14 +122,14 @@
             button.className = insightButton.className;
 
             if (isMinimized) {
-                button.innerHTML = '<i class="fas fa-random"></i>';
-                button.style.fontSize = '18px';
-                button.style.color = 'var(--ds-icon, #42526E) !important';
-                button.style.display = 'flex';
-                button.style.alignItems = 'center';
-                button.style.justifyContent = 'center';
-                button.style.width = '32px';
-                button.style.height = '32px';
+            button.innerHTML = '<i class="fas fa-random"></i>';
+            button.setAttribute('style', 'color: var(--ds-icon, #42526E) !important;');
+            button.style.fontSize = '18px';
+            button.style.display = 'flex';
+            button.style.alignItems = 'center';
+            button.style.justifyContent = 'center';
+            button.style.width = '32px';
+            button.style.height = '32px';
             } else {
                 button.innerHTML = "Randomize";
             }

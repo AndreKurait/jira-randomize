@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         JIRA Board Randomize Swimlanes
-// @version      2
+// @version      2.1
 // @description  Add a Randomize button to JIRA board.
 // @author       https://github.com/clintonmonk
 // @match        https://*.atlassian.net/jira/software/*

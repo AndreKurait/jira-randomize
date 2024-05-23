@@ -136,27 +136,33 @@
         }
     };
 
+    const extractPath = (url) => {
+        const urlObj = new URL(url);
+        return urlObj.origin + urlObj.pathname;
+    };
+
     const runScript = () => {
-        if (!/\/boards\/\d+(\/)?$/.test(window.location.href)) {
-            console.log(`Not proceeding since window href was ${window.location.href} and did not match /\/boards\/\d+(\/)?$/`);
+        const url = extractPath(window.location.href);
+        if (!/\/boards\/\d+(\/)?$/.test(url)) {
+            console.log(`Not proceeding since window href was ${url} and did not match /\/boards\/\d+(\/)?$/`);
         } else {
-            console.log(`Proceeding since window href was ${window.location.href} matched /\/boards\/\d+(\/)?$/`);
+            console.log(`Proceeding since window href was ${url} matched /\/boards\/\d+(\/)?$/`);
             loadFontAwesome();
             waitForInsightsButton(findAndAddRandomizeButtons, 2000);
         }
     };
 
+
     const observeUrlChanges = () => {
-        let lastUrl = location.href;
+        let lastUrl = extractPath(location.href);
         new MutationObserver(() => {
-            const currentUrl = location.href;
+            const currentUrl = extractPath(location.href);
             if (currentUrl !== lastUrl) {
                 lastUrl = currentUrl;
                 runScript();
             }
         }).observe(document, { subtree: true, childList: true });
     };
-
     runScript();
     observeUrlChanges();
 })();
